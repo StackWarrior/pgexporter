@@ -1003,22 +1003,23 @@ parse_body_to_bridge(int endpoint, time_t timestamp, char* body, struct promethe
       }
       else if (line[0] == '#')
       {
-         if (!strncmp(&line[1], "HELP", 4))
+         if (!strncmp(&line[2], "HELP", 4))
          {
-            sscanf(line + 6, "%127s %1021[^\n]", name, help);
+            sscanf(line + 7, "%127s %1021[^\n]", name, help);
 
             metric_find_create(bridge, name, &metric);
 
             metric_set_name(metric, name);
             metric_set_help(metric, help);
          }
-         else if (!strncmp(&line[1], "TYPE", 4))
+         else if (!strncmp(&line[2], "TYPE", 4))
          {
-            sscanf(line + 6, "%127s %127[^\n]", name, type);
+            sscanf(line + 7, "%127s %127[^\n]", name, type);
             metric_set_type(metric, type);
          }
          else
          {
+            pgexporter_log_error("parse_body_to_bridge: unknown # line: %s", line);
             goto error;
          }
       }
